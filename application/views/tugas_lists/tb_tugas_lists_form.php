@@ -53,8 +53,8 @@
 			 <label for="">Subject Kepentingan</label>
 
 			 	<select name="Subject_Kepentingan" id="member" class="form-control">
-                    <?php foreach ($member as $member): ?>
-                        <?="<option value=$member->member_id > $member->name</option>"?>
+                    <?php foreach ($list_kepentingan as $key => $value): ?>
+                        <?="<option value=$value->id > $value->kepentingan</option>"?>
                     <?php endforeach;?>
                 </select>
  			</div>

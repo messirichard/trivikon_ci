@@ -193,6 +193,9 @@ class Tugas_lists extends CI_Controller
 			$this->data['title'] = 'tugas_lists';
 			$this->get_Meta();
 			$this->data['_view'] = 'tugas_lists/tb_tugas_lists_form';
+
+			$this->data['list_kepentingan'] = $this->db->get('tb_tugas_kepentingan')->result();
+
 			$this->_render_page('layouts/main',$this->data);
 		}
     }
