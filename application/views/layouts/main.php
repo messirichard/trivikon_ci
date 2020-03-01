@@ -28,7 +28,11 @@
   <!-- jvectormap -->
   <link rel="stylesheet" href="<?php echo base_url('resources');?>/bower_components/jvectormap/jquery-jvectormap.css">
   <!-- Date Picker -->
-  <link rel="stylesheet" href="<?php echo base_url('resources');?>/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+	<link rel="stylesheet" href="<?php echo base_url('resources');?>/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+	<link rel="stylesheet" href="<?php echo base_url('resources');?>/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+	
+	
+	
   <!-- Daterange picker -->
   <link rel="stylesheet" href="<?php echo base_url('resources');?>/bower_components/bootstrap-daterangepicker/daterangepicker.css">
   <!-- bootstrap wysihtml5 - text editor -->
@@ -155,44 +159,23 @@
       <!-- sidebar menu: : style can be found in sidebar.less -->
       <ul class="sidebar-menu" data-widget="tree">
         <li class="header">MAIN NAVIGATION</li>
-        <li><?php echo anchor('dashboard','<i class="fa fa-dashboard"></i><span> Beranda</span>');?></li>		
-		<?php 		
-		$id_user = $usr->id;
-		$get_group = $this->db->get_where('users_groups', array('user_id'=> $id_user));
-		$hasil = $get_group->result();
-		foreach($hasil as $h)		
-		if(isset($h->group_id)){
-			$in_group = $this->ion_auth->in_group($h->group_id);
-			if(isset($in_group)){
-				$get_menu = $this->db->get_where('menu',array('parent_menu' => 0, 'menu_grup_user' => $h->group_id));
-				$menu = $get_menu->result();
-				foreach($menu as $m){
-					$cekSub = $this->db->get_where('menu',array('parent_menu' => $m->id));					
-					if($cekSub->num_rows() > 0){
-						echo '
-						<li class="treeview">
-						  <a href="#">
-							<i class="fa '.$m->icon.'"></i> <span>'.$m->nama_menu.'</span>
-							<span class="pull-right-container">
-							  <i class="fa fa-angle-left pull-right"></i>
-							</span>
-						  </a>
-						  <ul class="treeview-menu">
-							<li>';
-							foreach($cekSub->result() as $c)
-							echo anchor(''.$c->controller_link.'','<i class="fa '.$c->icon.'"></i><span> '.$c->nama_menu.'</span>');
-							echo '</li>
-						  </ul>		  
-						</li>';
-					} else {
-						echo '<li>';
-						echo anchor(''.$m->controller_link.'','<i class="fa '.$m->icon.'"></i><span> '.$m->nama_menu.'</span>');
-						echo '</li>';
-					}
-				}
-			}			
-		}			
-		?>
+				<li><?php echo anchor('dashboard','<i class="fa fa-dashboard"></i><span> Beranda</span>');?></li>
+				<li><?php echo anchor('member','<i class="fa fa-dashboard"></i><span> Member</span>');?></li>
+				<li class="treeview">
+          <a href="#">
+            <i class="fa fa-users"></i> <span>Tugas</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+						<li><?php echo anchor('tugas_kepentingan','<i class="fa fa-circle-o"></i><span> Tambah Tugas</span>');?></li>
+            <li><?php echo anchor('tugas_lists','<i class="fa fa-circle-o"></i><span> Semua Tugas</span>');?></li>
+            <li><?php echo anchor('tugas_lists','<i class="fa fa-circle-o"></i><span> Rekap Tugas</span>');?></li>
+
+          </ul>		  
+        </li>
+
 		<?php if($this->ion_auth->is_admin()){?>
 		<li class="treeview">
           <a href="#">
@@ -281,7 +264,7 @@
 <script src="<?php echo site_url('resources');?>/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 <!-- Morris.js charts -->
 <script src="<?php echo site_url('resources');?>/bower_components/raphael/raphael.min.js"></script>
-<script src="<?php echo site_url('resources');?>/bower_components/morris.js/morris.min.js"></script>
+<!-- <script src="<?php echo site_url('resources');?>/bower_components/morris.js/morris.min.js"></script> -->
 <!-- Sparkline -->
 <script src="<?php echo site_url('resources');?>/bower_components/jquery-sparkline/dist/jquery.sparkline.min.js"></script>
 <!-- Select2 -->
@@ -311,6 +294,7 @@
 <!-- DataTables -->
 <script src="<?php echo site_url('resources');?>/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="<?php echo site_url('resources');?>/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+
 </body>
 </html>
 

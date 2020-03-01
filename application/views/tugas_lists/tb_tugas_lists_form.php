@@ -49,14 +49,14 @@
 					// echo form_input($subject_kepentingan);
 				?>
  			</div> -->
-			 <div class="form-group">
-			 <label for="">Subject Kepentingan</label>
+ 			<div class="form-group">
+ 				<label for="">Subject Kepentingan</label>
 
-			 	<select name="Subject_Kepentingan" id="member" class="form-control">
-                    <?php foreach ($list_kepentingan as $key => $value): ?>
-                        <?="<option value=$value->id > $value->kepentingan</option>"?>
-                    <?php endforeach;?>
-                </select>
+ 				<select name="subject_kepentingan" id="member" class="form-control">
+ 					<?php foreach ($list_kepentingan as $key => $value): ?>
+ 					<?="<option value=$value->id > $value->kepentingan</option>"?>
+ 					<?php endforeach;?>
+ 				</select>
  			</div>
  			<div class="form-group">
  				<?php 
@@ -80,32 +80,35 @@
 				?>
  			</div>
  			<div class="form-group">
- 				<?php 
-					echo form_label('Member Id');
-					echo form_error('member_id');
-					echo form_input($member_id);
-				?>
+ 				<label for="">Member</label>
+
+ 				<select name="member_id" id="member" class="form-control">
+ 					<?php foreach ($member as $key => $value): ?>
+ 					<?="<option value=$value->id > $value->nama</option>"?>
+ 					<?php endforeach;?>
+ 				</select>
+ 			</div>
+ 			
+ 			<div class="form-group">
+				 <input type="hidden" name="admin_id" value="<?php echo $admin_id ?>">
+ 				<label for="">Date Input</label>
+ 				<div class="input-group date">
+
+ 					<div class="input-group-addon">
+ 						<i class="fa fa-calendar"></i>
+ 					</div>
+ 					<input name="date_input" type="text" class="form-control pull-right datepicker-me"
+ 						id="datepicker-me">
+ 				</div>
  			</div>
  			<div class="form-group">
- 				<?php 
-					echo form_label('Admin Id');
-					echo form_error('admin_id');
-					echo form_input($admin_id);
-				?>
- 			</div>
- 			<div class="form-group">
- 				<?php 
-					echo form_label('Date Input');
-					echo form_error('date_input');
-					echo form_input($date_input);
-				?>
- 			</div>
- 			<div class="form-group">
- 				<?php 
-					echo form_label('Date Finish');
-					echo form_error('date_finish');
-					echo form_input($date_finish);
-				?>
+ 				<label for="">Date Finish</label>
+ 				<div class="input-group date">
+ 					<div class="input-group-addon">
+ 						<i class="fa fa-calendar"></i>
+ 					</div>
+ 					<input name="date_finish" type="text" class="form-control pull-right datepicker-me" id="datepicker-me">
+ 				</div>
  			</div>
  			<div class="form-group">
  				<?php 

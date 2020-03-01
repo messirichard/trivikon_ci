@@ -57,9 +57,8 @@ class Tugas_lists extends CI_Controller
 			// redirect them to the login page
 			redirect('auth/login', 'refresh');
 		}
-		else if (!$this->ion_auth->is_admin()) // remove this elseif if you want to enable this for non-admins
+		else if (!$this->ion_auth->is_admin())
 		{
-			// redirect them to the home page because they must be an administrator to view this
 			return show_error('Anda tidak punya akses di halaman ini');
 		}
 		else
@@ -136,7 +135,7 @@ class Tugas_lists extends CI_Controller
 				'class'			=> 'form-control',
 			);
 		    $this->data['subject_kepentingan'] = array(
-				'name'			=> 'subject_kepentingan',
+				'name'			=> 'kepentingan',
 				'type'			=> 'text',
 				'value'			=> $this->form_validation->set_value('subject_kepentingan'),
 				'class'			=> 'form-control',
@@ -195,7 +194,12 @@ class Tugas_lists extends CI_Controller
 			$this->data['_view'] = 'tugas_lists/tb_tugas_lists_form';
 
 			$this->data['list_kepentingan'] = $this->db->get('tb_tugas_kepentingan')->result();
-
+			$this->data['member'] = $this->db->get('tb_member')->result();
+			$session_user = $this->ion_auth->user()->row();
+			$this->data['admin_id'] = $session_user->id;
+			// echo "<pre>";
+			// print_r($this->data);
+			// die();
 			$this->_render_page('layouts/main',$this->data);
 		}
     }
