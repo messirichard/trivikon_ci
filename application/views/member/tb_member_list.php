@@ -96,7 +96,6 @@
             <div class="col-md-6">
                 <a href="#" class="btn btn-flat btn-primary">Total Record : <?php echo $total_rows ?></a>
 		<?php echo anchor(site_url('member/excel'), '<i class="fa fa-file-excel-o"></i> Excel', 'class="btn btn-flat btn-success"'); ?>
-		<?php echo anchor(site_url('member/pdf'), '<i class="fa fa-file-pdf-o"></i> PDF', 'class="btn btn-flat btn-danger"'); ?>
 	    </div>
             <div class="col-md-6 text-right">
                 <?php echo $pagination ?>

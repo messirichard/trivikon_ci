@@ -11,37 +11,43 @@ class Menu extends CI_Controller
 		$this->load->database();
         $this->load->model(array('Menu_model','Identitas_web_model'));
         $this->load->library(array('ion_auth','form_validation'));
-		$this->load->helper(array('url', 'html'));        
-		$this->load->library('datatables');
+		$this->load->helper(array('url', 'html'));
     }
 
     public function index()
     {
-        if (!$this->ion_auth->logged_in())
-		{
-			// redirect them to the login page
-			redirect('auth/login', 'refresh');
-		}
-		else if (!$this->ion_auth->is_admin()) // remove this elseif if you want to enable this for non-admins
-		{
-			// redirect them to the home page because they must be an administrator to view this
-			return show_error('Anda tidak punya akses di halaman ini');
-		}
-		else
-		{
-			$this->data['usr'] = $this->ion_auth->user()->row();
-						
-			$this->data['title'] = 'menu';
-			$this->get_Meta();
+        $q = urldecode($this->input->get('q', TRUE));
+        $start = intval($this->input->get('start'));
+        
+        if ($q <> '') {
+            $config['base_url'] = base_url() . 'menu/index.html?q=' . urlencode($q);
+            $config['first_url'] = base_url() . 'menu/index.html?q=' . urlencode($q);
+        } else {
+            $config['base_url'] = base_url() . 'menu/index.html';
+            $config['first_url'] = base_url() . 'menu/index.html';
+        }
+
+        $config['per_page'] = 10;
+        $config['page_query_string'] = TRUE;
+        $config['total_rows'] = $this->Menu_model->total_rows($q);
+        $menu = $this->Menu_model->get_limit_data($config['per_page'], $start, $q);
+
+        $this->load->library('pagination');
+        $this->pagination->initialize($config);
+            
+        $this->data['menu_data'] = $menu;
+        $this->data['q'] = $q;
+        $this->data['pagination'] = $this->pagination->create_links();
+        $this->data['total_rows'] = $config['total_rows'];
+        $this->data['start'] = $start;
+		
+		$this->data['user'] = $this->ion_auth->user()->row();
+		
+		$this->data['title'] = 'menu';
+		$this->get_Meta();
 			
-			$this->data['_view']='menu/menu_list';
-			$this->_render_page('layouts/main',$this->data);
-		}
-    } 
-    
-    public function json() {
-        header('Content-Type: application/json');
-        echo $this->Menu_model->json();
+        $this->data['_view'] = 'menu/menu_list';
+        $this->_render_page('layouts/main', $this->data);
     }
 
     public function read($id) 
@@ -58,7 +64,7 @@ class Menu extends CI_Controller
 		}
 		else
 		{
-			$this->data['usr'] = $this->ion_auth->user()->row();
+			$this->data['user'] = $this->ion_auth->user()->row();
 			
 			$row = $this->Menu_model->get_by_id($id);
 			if ($row) {
@@ -97,20 +103,13 @@ class Menu extends CI_Controller
 		}
 		else
 		{
-			$this->data['usr'] = $this->ion_auth->user()->row();			
 			$this->data['user'] = $this->ion_auth->user()->row();
-			$this->data['users'] = $this->ion_auth->users()->result();
-			foreach ($this->data['users'] as $k => $user)
-			{
-				$this->data['users'][$k]->groups = $this->ion_auth->get_users_groups($user->id)->result();
-			}
-			$this->data['get_parent'] = $this->Menu_model->get_all();
 			
 			$this->data['button'] = 'Tambah';
 			$this->data['action'] = site_url('menu/create_action');
 		    $this->data['id'] = array(
 				'name'			=> 'id',
-				'type'			=> 'hidden',
+				'type'			=> 'text',
 				'value'			=> $this->form_validation->set_value('id'),
 				'class'			=> 'form-control',
 			);
@@ -118,7 +117,7 @@ class Menu extends CI_Controller
 				'name'			=> 'parent_menu',
 				'type'			=> 'text',
 				'value'			=> $this->form_validation->set_value('parent_menu'),
-				'class'			=> 'form-control select2',
+				'class'			=> 'form-control',
 			);
 		    $this->data['nama_menu'] = array(
 				'name'			=> 'nama_menu',
@@ -136,7 +135,7 @@ class Menu extends CI_Controller
 				'name'			=> 'icon',
 				'type'			=> 'text',
 				'value'			=> $this->form_validation->set_value('icon'),
-				'class'			=> 'form-control select2',
+				'class'			=> 'form-control',
 			);
 		    $this->data['slug'] = array(
 				'name'			=> 'slug',
@@ -154,13 +153,13 @@ class Menu extends CI_Controller
 				'name'			=> 'menu_grup_user',
 				'type'			=> 'text',
 				'value'			=> $this->form_validation->set_value('menu_grup_user'),
-				'class'			=> 'form-control select2',
+				'class'			=> 'form-control',
 			);
 		    $this->data['is_active'] = array(
 				'name'			=> 'is_active',
 				'type'			=> 'text',
 				'value'			=> $this->form_validation->set_value('is_active'),
-				'class'			=> 'form-control select2',
+				'class'			=> 'form-control',
 			);
 	
 			$this->data['title'] = 'menu';
@@ -178,15 +177,15 @@ class Menu extends CI_Controller
             $this->create();
         } else {
             $data = array(
-			'parent_menu' 			=> $this->input->post('parent_menu',TRUE),
-			'nama_menu' 			=> $this->input->post('nama_menu',TRUE),
-			'controller_link' 		=> $this->input->post('controller_link',TRUE),
-			'icon' 					=> $this->input->post('icon',TRUE),
-			'slug' 					=> $this->input->post('slug',TRUE),
-			'urut_menu' 			=> $this->input->post('urut_menu',TRUE),
-			'menu_grup_user' 			=> $this->input->post('menu_grup_user',TRUE),
-			'is_active' 			=> $this->input->post('is_active',TRUE),
-			);
+		'parent_menu' 			=> $this->input->post('parent_menu',TRUE),
+		'nama_menu' 			=> $this->input->post('nama_menu',TRUE),
+		'controller_link' 			=> $this->input->post('controller_link',TRUE),
+		'icon' 			=> $this->input->post('icon',TRUE),
+		'slug' 			=> $this->input->post('slug',TRUE),
+		'urut_menu' 			=> $this->input->post('urut_menu',TRUE),
+		'menu_grup_user' 			=> $this->input->post('menu_grup_user',TRUE),
+		'is_active' 			=> $this->input->post('is_active',TRUE),
+	    );
 
             $this->Menu_model->insert($data);
             $this->data['message'] = 'Data berhasil ditambahkan';
@@ -208,16 +207,7 @@ class Menu extends CI_Controller
 		}
 		else
 		{
-			$this->data['usr'] = $this->ion_auth->user()->row();
 			$this->data['user'] = $this->ion_auth->user()->row();
-			$this->data['users'] = $this->ion_auth->users()->result();
-			foreach ($this->data['users'] as $k => $user)
-			{
-				$this->data['users'][$k]->groups = $this->ion_auth->get_users_groups($user->id)->result();
-			}
-			
-			
-			$this->data['get_parent'] = $this->Menu_model->get_all();
 			
 			$row = $this->Menu_model->get_by_id($id);
 
@@ -226,7 +216,7 @@ class Menu extends CI_Controller
 				$this->data['action']		= site_url('menu/update_action');
 			    $this->data['id'] = array(
 					'name'			=> 'id',
-					'type'			=> 'hidden',
+					'type'			=> 'text',
 					'value'			=> $this->form_validation->set_value('id', $row->id),
 					'class'			=> 'form-control',
 				);
@@ -234,7 +224,7 @@ class Menu extends CI_Controller
 					'name'			=> 'parent_menu',
 					'type'			=> 'text',
 					'value'			=> $this->form_validation->set_value('parent_menu', $row->parent_menu),
-					'class'			=> 'form-control select2',
+					'class'			=> 'form-control',
 				);
 			    $this->data['nama_menu'] = array(
 					'name'			=> 'nama_menu',
@@ -252,7 +242,7 @@ class Menu extends CI_Controller
 					'name'			=> 'icon',
 					'type'			=> 'text',
 					'value'			=> $this->form_validation->set_value('icon', $row->icon),
-					'class'			=> 'form-control select2',
+					'class'			=> 'form-control',
 				);
 			    $this->data['slug'] = array(
 					'name'			=> 'slug',
@@ -270,13 +260,13 @@ class Menu extends CI_Controller
 					'name'			=> 'menu_grup_user',
 					'type'			=> 'text',
 					'value'			=> $this->form_validation->set_value('menu_grup_user', $row->menu_grup_user),
-					'class'			=> 'form-control select2',
+					'class'			=> 'form-control',
 				);
 			    $this->data['is_active'] = array(
 					'name'			=> 'is_active',
 					'type'			=> 'text',
 					'value'			=> $this->form_validation->set_value('is_active', $row->is_active),
-					'class'			=> 'form-control select2',
+					'class'			=> 'form-control',
 				);
 	   
 				$this->data['title'] = 'menu';
@@ -332,7 +322,7 @@ class Menu extends CI_Controller
 		
 		$rows = $this->Identitas_web_model->get_all();
 		foreach ($rows as $row) {			
-			$this->data['web_name'] 		= $this->form_validation->set_value('nama_web',$row->nama_web);
+			$this->data['name_web'] 		= $this->form_validation->set_value('nama_web',$row->nama_web);
 			$this->data['meta_description']= $this->form_validation->set_value('meta_deskripsi',$row->meta_deskripsi);
 			$this->data['meta_keywords'] 	= $this->form_validation->set_value('meta_keyword',$row->meta_keyword);
 			$this->data['copyrights'] 		= $this->form_validation->set_value('copyright',$row->copyright);
@@ -356,7 +346,7 @@ class Menu extends CI_Controller
 	
     public function _rules() 
     {
-	$this->form_validation->set_rules('parent_menu', 'parent menu', 'trim');
+	$this->form_validation->set_rules('parent_menu', 'parent menu', 'trim|required');
 	$this->form_validation->set_rules('nama_menu', 'nama menu', 'trim|required');
 	$this->form_validation->set_rules('controller_link', 'controller link', 'trim|required');
 	$this->form_validation->set_rules('icon', 'icon', 'trim|required');

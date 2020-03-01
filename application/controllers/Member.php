@@ -9,7 +9,7 @@ class Member extends CI_Controller
     {
         parent::__construct();
 		$this->load->database();
-        $this->load->model(array('Member_mod','Identitas_web_model'));
+        $this->load->model(array('Member_model','Identitas_web_model'));
         $this->load->library(array('ion_auth','form_validation'));
 		$this->load->helper(array('url', 'html'));
     }
@@ -29,8 +29,8 @@ class Member extends CI_Controller
 
         $config['per_page'] = 10;
         $config['page_query_string'] = TRUE;
-        $config['total_rows'] = $this->Member_mod->total_rows($q);
-        $member = $this->Member_mod->get_limit_data($config['per_page'], $start, $q);
+        $config['total_rows'] = $this->Member_model->total_rows($q);
+        $member = $this->Member_model->get_limit_data($config['per_page'], $start, $q);
 
         $this->load->library('pagination');
         $this->pagination->initialize($config);
@@ -66,7 +66,7 @@ class Member extends CI_Controller
 		{
 			$this->data['user'] = $this->ion_auth->user()->row();
 			
-			$row = $this->Member_mod->get_by_id($id);
+			$row = $this->Member_model->get_by_id($id);
 			if ($row) {
 				$this->data['id'] = $this->form_validation->set_value('id',$row->id);
 				$this->data['nama'] = $this->form_validation->set_value('nama',$row->nama);
@@ -211,7 +211,7 @@ class Member extends CI_Controller
 		'status' 			=> $this->input->post('status',TRUE),
 	    );
 
-            $this->Member_mod->insert($data);
+            $this->Member_model->insert($data);
             $this->data['message'] = 'Data berhasil ditambahkan';
             redirect(site_url('member'));
         }
@@ -233,7 +233,7 @@ class Member extends CI_Controller
 		{
 			$this->data['user'] = $this->ion_auth->user()->row();
 			
-			$row = $this->Member_mod->get_by_id($id);
+			$row = $this->Member_model->get_by_id($id);
 
 			if ($row) {
 				$this->data['button']		= 'Ubah';
@@ -343,7 +343,7 @@ class Member extends CI_Controller
 			'status' 					=> $this->input->post('status',TRUE),
 	    );
 
-            $this->Member_mod->update($this->input->post('id', TRUE), $data);
+            $this->Member_model->update($this->input->post('id', TRUE), $data);
             $this->data['message'] = 'Data berhasil di ubah';
             redirect(site_url('member'));
         }
@@ -351,10 +351,10 @@ class Member extends CI_Controller
     
     public function delete($id) 
     {
-        $row = $this->Member_mod->get_by_id($id);
+        $row = $this->Member_model->get_by_id($id);
 
         if ($row) {
-            $this->Member_mod->delete($id);
+            $this->Member_model->delete($id);
             $this->data['message'] = 'Hapus data berhasil';
             redirect(site_url('member'));
         } else {
@@ -441,7 +441,7 @@ class Member extends CI_Controller
 	xlsWriteLabel($tablehead, $kolomhead++, "Nama Subkontraktor");
 	xlsWriteLabel($tablehead, $kolomhead++, "Status");
 
-	foreach ($this->Member_mod->get_all() as $data) {
+	foreach ($this->Member_model->get_all() as $data) {
             $kolombody = 0;
 
             //ubah xlsWriteLabel menjadi xlsWriteNumber untuk kolom numeric
@@ -464,21 +464,6 @@ class Member extends CI_Controller
 
         xlsEOF();
         exit();
-    }
-
-    function pdf()
-    {
-        $data = array(
-            'tb_member_data' => $this->Member_mod->get_all(),
-            'start' => 0
-        );
-        
-        ini_set('memory_limit', '32M');
-        $html = $this->load->view('member/tb_member_pdf', $data, true);
-        $this->load->library('pdf');
-        $pdf = $this->pdf->load();
-        $pdf->WriteHTML($html);
-        $pdf->Output('tb_member.pdf', 'D'); 
     }
 
 }

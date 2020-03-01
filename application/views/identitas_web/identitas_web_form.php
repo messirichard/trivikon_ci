@@ -19,9 +19,9 @@
       <!-- Default box -->
       <div class="box">
         <div class="box-header">
-		 <h3 class="box-title"><?php echo $button ;?> Identitas Web</h3>
+		 <h3 class="box-title"><?php echo $button ;?> Identitas_web</h3>
 		<hr />	 
-		<?php echo form_open_multipart($action);?>
+		<?php echo form_open($action);?>
 	    <div class="form-group">
 				<?php 
 					echo form_label('Nama Web');
@@ -54,10 +54,7 @@
 				<?php 
 					echo form_label('Logo');
 					echo form_error('logo');
-					echo form_upload($logo);
-					echo '</br>';
-					
-					echo img($logo['value']);
+					echo form_input($logo);
 				?>				
 			</div>
 	    <?php 

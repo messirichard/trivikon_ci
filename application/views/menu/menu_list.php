@@ -1,108 +1,102 @@
 
-   <!-- Content Header (Page header) -->
+       
+    <!-- Content Header (Page header) -->
     <section class="content-header">
-      <h1>        
+      <h1>
+        
         <small></small>
       </h1>
       <ol class="breadcrumb">
-        <li><?php echo anchor('dashboard','<i class="fa fa-dashboard"></i> Beranda</a>')?></li>
+        <li><?php echo anchor('dashboard','<i class="fa fa-dashboard"></i> Dashboard</a>')?></li>
       </ol>
     </section>
+	
 <!-- Main content -->
     <section class="content">
 	<?php if(isset($message)){   
 		 echo '<div class="alert alert-warning">  
 		   <a href="#" class="close" data-dismiss="alert">&times;</a>  
 		   '.$message.'
-		 </div>';
+		 </div> '; 
     }  ?>
       <!-- Default box -->
       <div class="box">
         <div class="box-header">
-		 <h3 class="box-title">Daftar menu </h3><hr />	
-			<div class="box-tools pull-right">            
-                <?php echo anchor(site_url('menu/create'), '<i class = "fa fa-plus"></i> Tambah Data', 'class="btn btn-flat btn-info"'); ?>
-	   
-			</div>
-		</div>
-            <div class="box-body">
-        <table class="table table-bordered table-striped" id="myTable">
-            <thead>
-                <tr>
-                    <th width="80px">No</th>
-			    	<th>Parent Menu</th>
-			    	<th>Nama Menu</th>
-			    	<th>Controller Link</th>
-			    	<th>Icon</th>
-			    	<th>Slug</th>
-			    	<th>Urut Menu</th>
-			    	<th>Menu Users</th>
-			    	<th>Is Active</th>
-			    	<th width="200px">Aksi</th>
-                </tr>
-            </thead>
-	    
-        </table>
-        <script src="<?php echo base_url('resources/js/jquery-1.11.2.min.js') ?>"></script>
-        <script type="text/javascript">
-            $(document).ready(function() {
-                $.fn.dataTableExt.oApi.fnPagingInfo = function(oSettings)
-                {
-                    return {
-                        "iStart": oSettings._iDisplayStart,
-                        "iEnd": oSettings.fnDisplayEnd(),
-                        "iLength": oSettings._iDisplayLength,
-                        "iTotal": oSettings.fnRecordsTotal(),
-                        "iFilteredTotal": oSettings.fnRecordsDisplay(),
-                        "iPage": Math.ceil(oSettings._iDisplayStart / oSettings._iDisplayLength),
-                        "iTotalPages": Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength)
-                    };
-                };
-
-                var t = $("#myTable").dataTable({
-                    initComplete: function() {
-                        var api = this.api();
-                        $('#mytable_filter input')
-                                .off('.DT')
-                                .on('keyup.DT', function(e) {
-                                    if (e.keyCode == 13) {
-                                        api.search(this.value).draw();
-                            }
-                        });
-                    },
-                    oLanguage: {
-                        sProcessing: "loading..."
-                    },
-					"scrollX": true,
-                    processing: true,
-                    serverSide: true,
-                    ajax: {"url": "menu/json", "type": "POST"},
-                    columns: [
-                        {
-                            "data": "id",
-                            "orderable": false
-                        },{"data": "parent_menu"},{"data": "nama_menu"},{"data": "controller_link"},{"data": "icon"},{"data": "slug"},{"data": "urut_menu"},{"data": "menu_grup_user"},{"data": "is_active"},
-                        {
-                            "data" : "action",
-                            "orderable": false,
-                            "className" : "text-center"
-                        }
-                    ],
-                    order: [[0, 'desc']],
-                    rowCallback: function(row, data, iDisplayIndex) {
-                        var info = this.fnPagingInfo();
-                        var page = info.iPage;
-                        var length = info.iLength;
-                        var index = page * length + (iDisplayIndex + 1);
-                        $('td:eq(0)', row).html(index);
-                    }
-                });
-            });
-        </script>
-			</div>
-          
+		 <h3 class="box-title">Daftar Menu</h3><hr />	
         
-    </section>
+			 <?php echo anchor(site_url('menu/create'),'<i class = "fa fa-plus"></i> Tambah', 'class="btn btn-flat btn-primary"'); ?>
+            
+            <div class="box-tools pull-right">
+                <form action="<?php echo site_url('menu/index'); ?>" class="form-inline" method="get">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="q" value="<?php echo $q; ?>">
+                        <span class="input-group-btn">
+                            <?php 
+                                if ($q <> '')
+                                {
+                                    ?>
+                                    <a href="<?php echo site_url('menu'); ?>" class="btn btn-flat btn-default">Reset</a>
+                                    <?php
+                                }
+                            ?>
+                          <button class="btn btn-flat btn-primary" type="submit"><i class="fa fa-search"></i></button>
+                        </span>
+                    </div>
+                </form>
+            </div>
+        </div>
+		<div class="box-body">
+        <table class="table table-bordered" style="margin-bottom: 10px">
+            <tr>
+                <th>No</th>
+		<th>Parent Menu</th>
+		<th>Nama Menu</th>
+		<th>Controller Link</th>
+		<th>Icon</th>
+		<th>Slug</th>
+		<th>Urut Menu</th>
+		<th>Menu Grup User</th>
+		<th>Is Active</th>
+		<th>Aksi</th>
+            </tr><?php
+            foreach ($menu_data as $menu)
+            {
+                ?>
+                <tr>
+			<td width="80px"><?php echo ++$start ?></td>
+			<td><?php echo $menu->parent_menu ?></td>
+			<td><?php echo $menu->nama_menu ?></td>
+			<td><?php echo $menu->controller_link ?></td>
+			<td><?php echo $menu->icon ?></td>
+			<td><?php echo $menu->slug ?></td>
+			<td><?php echo $menu->urut_menu ?></td>
+			<td><?php echo $menu->menu_grup_user ?></td>
+			<td><?php echo $menu->is_active ?></td>
+			<td style="text-align:center" width="200px">
+				<?php 
+				echo anchor(site_url('menu/read/'.$menu->id),'<i class="fa fa-eye"></i>','class="btn btn-flat btn-info"'); 
+				echo '  '; 
+				echo anchor(site_url('menu/update/'.$menu->id),'<i class="fa fa-edit"></i>','class="btn btn-flat btn-warning"'); 
+				echo '  '; 
+				echo anchor(site_url('menu/delete/'.$menu->id),'<i class="fa fa-trash"></i>','class="btn btn-flat btn-danger"','onclick="javasciprt: return confirm(\'Anda Yakin ?\')"'); 
+				?>
+			</td>
+		</tr>
+                <?php
+            }
+            ?>
+        </table>
+        <div class="row">
+            <div class="col-md-6">
+                <a href="#" class="btn btn-flat btn-primary">Total Record : <?php echo $total_rows ?></a>
+	    </div>
+            <div class="col-md-6 text-right">
+                <?php echo $pagination ?>
+            </div>
+        </div>
+		</div>
+		</div>
+		</section>
    <!-- /.content -->
   
-	
+    

@@ -9,7 +9,7 @@ class Tugas_lists extends CI_Controller
     {
         parent::__construct();
 		$this->load->database();
-        $this->load->model(array('Tugas_lists_mod','Identitas_web_model'));
+        $this->load->model(array('Tugas_lists_model','Identitas_web_model'));
         $this->load->library(array('ion_auth','form_validation'));
 		$this->load->helper(array('url', 'html'));
     }
@@ -29,8 +29,8 @@ class Tugas_lists extends CI_Controller
 
         $config['per_page'] = 10;
         $config['page_query_string'] = TRUE;
-        $config['total_rows'] = $this->Tugas_lists_mod->total_rows($q);
-        $tugas_lists = $this->Tugas_lists_mod->get_limit_data($config['per_page'], $start, $q);
+        $config['total_rows'] = $this->Tugas_lists_model->total_rows($q);
+        $tugas_lists = $this->Tugas_lists_model->get_limit_data($config['per_page'], $start, $q);
 
         $this->load->library('pagination');
         $this->pagination->initialize($config);
@@ -66,7 +66,7 @@ class Tugas_lists extends CI_Controller
 		{
 			$this->data['user'] = $this->ion_auth->user()->row();
 			
-			$row = $this->Tugas_lists_mod->get_by_id($id);
+			$row = $this->Tugas_lists_model->get_by_id($id);
 			if ($row) {
 				$this->data['id'] = $this->form_validation->set_value('id',$row->id);
 				$this->data['dari'] = $this->form_validation->set_value('dari',$row->dari);
@@ -219,7 +219,7 @@ class Tugas_lists extends CI_Controller
 		'data' 			=> $this->input->post('data',TRUE),
 	    );
 
-            $this->Tugas_lists_mod->insert($data);
+            $this->Tugas_lists_model->insert($data);
             $this->data['message'] = 'Data berhasil ditambahkan';
             redirect(site_url('tugas_lists'));
         }
@@ -241,7 +241,7 @@ class Tugas_lists extends CI_Controller
 		{
 			$this->data['user'] = $this->ion_auth->user()->row();
 			
-			$row = $this->Tugas_lists_mod->get_by_id($id);
+			$row = $this->Tugas_lists_model->get_by_id($id);
 
 			if ($row) {
 				$this->data['button']		= 'Ubah';
@@ -358,7 +358,7 @@ class Tugas_lists extends CI_Controller
 			'data' 					=> $this->input->post('data',TRUE),
 	    );
 
-            $this->Tugas_lists_mod->update($this->input->post('id', TRUE), $data);
+            $this->Tugas_lists_model->update($this->input->post('id', TRUE), $data);
             $this->data['message'] = 'Data berhasil di ubah';
             redirect(site_url('tugas_lists'));
         }
@@ -366,10 +366,10 @@ class Tugas_lists extends CI_Controller
     
     public function delete($id) 
     {
-        $row = $this->Tugas_lists_mod->get_by_id($id);
+        $row = $this->Tugas_lists_model->get_by_id($id);
 
         if ($row) {
-            $this->Tugas_lists_mod->delete($id);
+            $this->Tugas_lists_model->delete($id);
             $this->data['message'] = 'Hapus data berhasil';
             redirect(site_url('tugas_lists'));
         } else {
@@ -458,7 +458,7 @@ class Tugas_lists extends CI_Controller
 	xlsWriteLabel($tablehead, $kolomhead++, "Date Finish");
 	xlsWriteLabel($tablehead, $kolomhead++, "Data");
 
-	foreach ($this->Tugas_lists_mod->get_all() as $data) {
+	foreach ($this->Tugas_lists_model->get_all() as $data) {
             $kolombody = 0;
 
             //ubah xlsWriteLabel menjadi xlsWriteNumber untuk kolom numeric

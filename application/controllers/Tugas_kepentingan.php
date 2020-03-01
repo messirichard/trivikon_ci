@@ -9,7 +9,7 @@ class Tugas_kepentingan extends CI_Controller
     {
         parent::__construct();
 		$this->load->database();
-        $this->load->model(array('Tugas_kepentingan_mod','Identitas_web_model'));
+        $this->load->model(array('Tugas_kepentingan_model','Identitas_web_model'));
         $this->load->library(array('ion_auth','form_validation'));
 		$this->load->helper(array('url', 'html'));
     }
@@ -29,8 +29,8 @@ class Tugas_kepentingan extends CI_Controller
 
         $config['per_page'] = 10;
         $config['page_query_string'] = TRUE;
-        $config['total_rows'] = $this->Tugas_kepentingan_mod->total_rows($q);
-        $tugas_kepentingan = $this->Tugas_kepentingan_mod->get_limit_data($config['per_page'], $start, $q);
+        $config['total_rows'] = $this->Tugas_kepentingan_model->total_rows($q);
+        $tugas_kepentingan = $this->Tugas_kepentingan_model->get_limit_data($config['per_page'], $start, $q);
 
         $this->load->library('pagination');
         $this->pagination->initialize($config);
@@ -66,7 +66,7 @@ class Tugas_kepentingan extends CI_Controller
 		{
 			$this->data['user'] = $this->ion_auth->user()->row();
 			
-			$row = $this->Tugas_kepentingan_mod->get_by_id($id);
+			$row = $this->Tugas_kepentingan_model->get_by_id($id);
 			if ($row) {
 				$this->data['id'] = $this->form_validation->set_value('id',$row->id);
 				$this->data['kepentingan'] = $this->form_validation->set_value('kepentingan',$row->kepentingan);
@@ -139,7 +139,7 @@ class Tugas_kepentingan extends CI_Controller
 		'nama_kepentingan' 			=> $this->input->post('nama_kepentingan',TRUE),
 	    );
 
-            $this->Tugas_kepentingan_mod->insert($data);
+            $this->Tugas_kepentingan_model->insert($data);
             $this->data['message'] = 'Data berhasil ditambahkan';
             redirect(site_url('tugas_kepentingan'));
         }
@@ -161,7 +161,7 @@ class Tugas_kepentingan extends CI_Controller
 		{
 			$this->data['user'] = $this->ion_auth->user()->row();
 			
-			$row = $this->Tugas_kepentingan_mod->get_by_id($id);
+			$row = $this->Tugas_kepentingan_model->get_by_id($id);
 
 			if ($row) {
 				$this->data['button']		= 'Ubah';
@@ -208,7 +208,7 @@ class Tugas_kepentingan extends CI_Controller
 			'nama_kepentingan' 					=> $this->input->post('nama_kepentingan',TRUE),
 	    );
 
-            $this->Tugas_kepentingan_mod->update($this->input->post('id', TRUE), $data);
+            $this->Tugas_kepentingan_model->update($this->input->post('id', TRUE), $data);
             $this->data['message'] = 'Data berhasil di ubah';
             redirect(site_url('tugas_kepentingan'));
         }
@@ -216,10 +216,10 @@ class Tugas_kepentingan extends CI_Controller
     
     public function delete($id) 
     {
-        $row = $this->Tugas_kepentingan_mod->get_by_id($id);
+        $row = $this->Tugas_kepentingan_model->get_by_id($id);
 
         if ($row) {
-            $this->Tugas_kepentingan_mod->delete($id);
+            $this->Tugas_kepentingan_model->delete($id);
             $this->data['message'] = 'Hapus data berhasil';
             redirect(site_url('tugas_kepentingan'));
         } else {
@@ -288,7 +288,7 @@ class Tugas_kepentingan extends CI_Controller
 	xlsWriteLabel($tablehead, $kolomhead++, "Kepentingan");
 	xlsWriteLabel($tablehead, $kolomhead++, "Nama Kepentingan");
 
-	foreach ($this->Tugas_kepentingan_mod->get_all() as $data) {
+	foreach ($this->Tugas_kepentingan_model->get_all() as $data) {
             $kolombody = 0;
 
             //ubah xlsWriteLabel menjadi xlsWriteNumber untuk kolom numeric

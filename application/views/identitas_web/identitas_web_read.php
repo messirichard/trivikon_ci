@@ -16,60 +16,19 @@
 		   '.$message.'
 		 </div> '; 
     }  ?>
-		
       <!-- Default box -->
       <div class="box">
         <div class="box-header">
-		 <h3 class="box-title">Detail Identitas Web</h3>
+		 <h3 class="box-title">Detail Identitas_web</h3>
 		<hr />
-		<form class="form-horizontal">
-              <div class="box-body">
-                <div class="form-group">
-                  <label class="col-sm-2 control-label">Nama Web</label>
-                  <div class="col-sm-10">
-                    <?php echo form_input($nama_web);?>
-                  </div>
-                </div>
-				<div class="form-group">
-                  <label class="col-sm-2 control-label">Meta Deskripsi</label>
-                  <div class="col-sm-10">
-                    <?php echo form_textarea($meta_deskripsi);?>
-                  </div>
-                </div>
-				<div class="form-group">
-                  <label class="col-sm-2 control-label">Meta Keyword</label>
-                  <div class="col-sm-10">
-                    <?php echo form_textarea($meta_keyword);?>
-                  </div>
-                </div>
-				<div class="form-group">
-                  <label class="col-sm-2 control-label">Copyright</label>
-                  <div class="col-sm-10">
-                    <?php echo form_input($copyright);?>
-                  </div>
-                </div>
-				<div class="form-group">
-                  <label class="col-sm-2 control-label">Logo</label>
-                  <div class="col-sm-10">
-                    <?php if(!empty($logo)){
-						echo img($logo);
-					} else {
-						echo img('uploads/noimagex.png');
-					}
-						?>
-                  </div>
-                </div>               
-                
-              </div>
-              <!-- /.box-body -->
-              <div class="box-footer">
-                <?php 
-					$id = 1;
-					echo anchor('identitas_web/update/'.$id.'','<i class="fa fa-edit"></i> Ubah data',array('class'=>'btn btn-flat btn-danger'));
-				?>
-              </div>
-              <!-- /.box-footer -->
-            </form>        
+        <table class="table">
+	    <tr><td>Nama Web</td><td><?php echo $nama_web; ?></td></tr>
+	    <tr><td>Meta Deskripsi</td><td><?php echo $meta_deskripsi; ?></td></tr>
+	    <tr><td>Meta Keyword</td><td><?php echo $meta_keyword; ?></td></tr>
+	    <tr><td>Copyright</td><td><?php echo $copyright; ?></td></tr>
+	    <tr><td>Logo</td><td><?php echo $logo; ?></td></tr>
+	    <tr><td></td><td><a href="<?php echo site_url('identitas_web') ?>" class="btn btn-flat btn-default">Batal</a></td></tr>
+	</table>
         </div>
 	 </div>
                
